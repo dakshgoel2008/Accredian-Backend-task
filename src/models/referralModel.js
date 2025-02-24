@@ -2,8 +2,10 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
 const createReferral = async (name, email, phone) => {
-    return await prisma.referral.create({
-        data: { name, email, phone },
+    return await prisma.referral.upsert({
+        where: { email },
+        update: { name, phone }, // Update existing entry
+        create: { name, email, phone }, // Create new entry if email doesn't exist
     });
 };
 

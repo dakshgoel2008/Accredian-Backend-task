@@ -5,5 +5,5 @@ const referralController = require("../controller/referralController");
 router.post("/referrals", referralController.saveReferral);
 
 router.get("/referrals", referralController.getAllReferrals);
-
 module.exports = router;
+

@@ -1,51 +1,45 @@
+require("dotenv").config();
 const nodemailer = require("nodemailer");
 const { google } = require("googleapis");
-const OAuth2 = google.auth.OAuth2;
 
-const createTransporter = async () => {
-    const oauth2Client = new OAuth2(
-        process.env.GMAIL_CLIENT_ID,
-        process.env.GMAIL_CLIENT_SECRET,
-        process.env.GMAIL_REDIRECT_URI
-    );
+// These id's and secrets should come from .env file.
+const CLIENT_ID = process.env.GMAIL_CLIENT_ID;
+const CLEINT_SECRET = process.env.GMAIL_CLIENT_SECRET;
+const REDIRECT_URI = "https://developers.google.com/oauthplayground";
+const REFRESH_TOKEN = process.env.GMAIL_REFRESH_TOKEN;
+const USER = process.env.GMAIL_USER;
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLEINT_SECRET, REDIRECT_URI);
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-    oauth2Client.setCredentials({
-        refresh_token: process.env.GMAIL_REFRESH_TOKEN,
-    });
+async function sendEmailNotification(email, name) {
+    try {
+        const accessToken = await oAuth2Client.getAccessToken();
 
-    const accessToken = await new Promise((resolve, reject) => {
-        oauth2Client.getAccessToken((err, token) => {
-            if (err) reject(err);
-            resolve(token);
+        const transport = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                type: "OAuth2",
+                user: "goel.daksh2008@gmail.com",
+                clientId: CLIENT_ID,
+                clientSecret: CLEINT_SECRET,
+                refreshToken: REFRESH_TOKEN,
+                accessToken: accessToken,
+            },
         });
-    });
 
-    return nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            type: "OAuth2",
-            user: process.env.GMAIL_USER,
-            accessToken,
-            clientId: process.env.GMAIL_CLIENT_ID,
-            clientSecret: process.env.GMAIL_CLIENT_SECRET,
-            refreshToken: process.env.GMAIL_REFRESH_TOKEN,
-        },
-    });
-};
+        const mailOptions = {
+            from: "SENDER NAME <goel.daksh2008@gmail.com>",
+            to: email,
+            subject: `Hello greetings from ${USER}`,
+            text: `Hi ${name}. Thank you for signing up`,
+            html: "<h1>Congratulations! your referral has been selected</h1>",
+        };
 
-const sendEmailNotification = async (email, name) => {
-    const transporter = await createTransporter();
+        const result = await transport.sendMail(mailOptions);
+        return result;
+    } catch (error) {
+        return error;
+    }
+}
 
-    const mailOptions = {
-        from: process.env.GMAIL_USER,
-        to: email,
-        subject: "Thank you for your referral!",
-        text: `Hi ${name}, thank you for submitting your referral.`,
-    };
-
-    await transporter.sendMail(mailOptions);
-};
-
-module.exports = {
-    sendEmailNotification,
-};
+module.exports = { sendEmailNotification };
