@@ -15,5 +15,6 @@ model Referral {
   phone     String
   referrerName String?
   referrerEmail String?
+  courseName  String?
   createdAt DateTime @default(now())
 }

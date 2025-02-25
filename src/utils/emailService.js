@@ -11,7 +11,7 @@ const USER = process.env.GMAIL_USER;
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLEINT_SECRET, REDIRECT_URI);
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-async function sendEmailNotification(email, name) {
+async function sendEmailNotification(email, name, courseName) {
     try {
         const accessToken = await oAuth2Client.getAccessToken();
 
@@ -32,7 +32,7 @@ async function sendEmailNotification(email, name) {
             to: email,
             subject: `Hello greetings from ${USER}`,
             text: `Hi ${name}. Thank you for signing up`,
-            html: "<h1>Congratulations! You are referred🎉🎉🎉</h1>",
+            html: `<h1>You have been referred this course: ${courseName}</h1>`,
         };
 
         const result = await transport.sendMail(mailOptions);
