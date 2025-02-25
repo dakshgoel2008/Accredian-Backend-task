@@ -32,7 +32,7 @@ async function sendEmailNotification(email, name) {
             to: email,
             subject: `Hello greetings from ${USER}`,
             text: `Hi ${name}. Thank you for signing up`,
-            html: "<h1>Congratulations! your referral has been selected</h1>",
+            html: "<h1>Congratulations! You are referred🎉🎉🎉</h1>",
         };
 
         const result = await transport.sendMail(mailOptions);

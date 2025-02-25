@@ -1,20 +1,20 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const createReferral = async (name, email, phone) => {
+const createReferral = async (name, email, phone, referrerEmail, referrerName) => {
     return await prisma.referral.upsert({
         where: { email },
-        update: { name, phone }, // Update existing entry
-        create: { name, email, phone }, // Create new entry if email doesn't exist
+        update: { name, phone, referrerEmail, referrerName },
+        create: { name, email, phone, referrerEmail, referrerName },
     });
 };
 
-// fetching the referrals from database.
 const getAllReferrals = async () => {
     return await prisma.referral.findMany();
 };
 
-module.exports = {
-    createReferral,
-    getAllReferrals,
-};
+process.on("beforeExit", async () => {
+    await prisma.$disconnect();
+});
+
+module.exports = { createReferral, getAllReferrals };

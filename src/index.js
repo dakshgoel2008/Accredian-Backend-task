@@ -4,10 +4,12 @@ const { google } = require("googleapis");
 const dotenv = require("dotenv");
 const referralRoutes = require("./routes/referralRoute");
 const PORT = process.env.PORT;
+const cors = require("cors");
+app.use(cors());
 
 dotenv.config();
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true })); // For form-urlencoded requests
 app.use("/api", referralRoutes);
 
 app.get("/", (req, res) => {

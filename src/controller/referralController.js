@@ -2,9 +2,9 @@ const referralModel = require("../models/referralModel");
 const { sendEmailNotification } = require("../utils/emailService");
 
 const saveReferral = async (req, res) => {
-    const { name, email, phone } = req.body;
+    const { name, email, phone, referrerEmail, referrerName } = req.body;
     // console.log(req.body);
-    const requiredFields = ["name", "email", "phone"];
+    const requiredFields = ["name", "email", "phone", "referrerEmail", "referrerName"];
     const missingFields = requiredFields.filter((field) => !req.body[field]);
     if (missingFields.length > 0) {
         return res.status(400).json({ error: `Details missing: ${missingFields.join(", ")}` });
@@ -12,7 +12,7 @@ const saveReferral = async (req, res) => {
 
     try {
         // Save data to the database
-        const referral = await referralModel.createReferral(name, email, phone);
+        const referral = await referralModel.createReferral(name, email, phone, referrerEmail, referrerName);
         // Send email notification
         await sendEmailNotification(email, name);
         sendEmailNotification(email, name)
