@@ -9,11 +9,7 @@ app.use(cors());
 dotenv.config();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); // For form-urlencoded requests
-app.use("/api", referralRoutes);
-
-app.get("/", (req, res) => {
-    res.send("Referral Backend is running!");
-});
+app.use("/", referralRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server connected successfully; running on http://localhost:${PORT}`);

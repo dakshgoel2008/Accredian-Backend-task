@@ -3,6 +3,7 @@ const prisma = new PrismaClient();
 
 const createReferral = async (name, email, phone, referrerEmail, referrerName, courseName) => {
     return await prisma.referral.upsert({
+        // if email doesn't exist create else update the referral data
         where: { email },
         update: { name, phone, referrerEmail, referrerName, courseName },
         create: { name, email, phone, referrerEmail, referrerName, courseName },
